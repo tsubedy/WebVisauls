@@ -16,121 +16,121 @@ d3.json("data/samples.json").then((sampleData) => {
   
 // Initializing plots with default values
 
-	function init() {
-		// Choosing a datapoint sample ID = 940 (the first data point) and plotting as default
-		defaultDataPoint = data.samples.filter(sample => sample.id === "940")[0];
-		console.log(defaultDataPoint);
+function init() {
+	// Choosing a datapoint sample ID = 940 (the first data point) and plotting as default
+	defaultDataPoint = data.samples.filter(sample => sample.id === "940")[0];
+	console.log(defaultDataPoint);
 
-		// Selecting Values, IDs and Labels for the default sample ID
-		sampleValuesDefault = defaultDataPoint.sample_values;
-		sampleIdsDefault = defaultDataPoint.otu_ids;
-		sampleLabelsDefault = defaultDataPoint.otu_labels;
+	// Selecting Values, IDs and Labels for the default sample ID
+	sampleValuesDefault = defaultDataPoint.sample_values;
+	sampleIdsDefault = defaultDataPoint.otu_ids;
+	sampleLabelsDefault = defaultDataPoint.otu_labels;
 
-		// Select the top 10 OTUs for the sample ID with their values, ids and labels
-		sampleValuesTopTen = sampleValuesDefault.slice(0, 10).reverse();
-		otuIdsTopTen = sampleIdsDefault.slice(0, 10).reverse();
-		otuLabelsTopTen = sampleLabelsDefault.slice(0, 10).reverse();
+	// Select the top 10 OTUs for the sample ID with their values, ids and labels
+	sampleValuesTopTen = sampleValuesDefault.slice(0, 10).reverse();
+	otuIdsTopTen = sampleIdsDefault.slice(0, 10).reverse();
+	otuLabelsTopTen = sampleLabelsDefault.slice(0, 10).reverse();
 
-		console.log(sampleValuesTopTen);
-		console.log(otuIdsTopTen);
-		console.log(otuLabelsTopTen);
+	console.log(sampleValuesTopTen);
+	console.log(otuIdsTopTen);
+	console.log(otuLabelsTopTen);
 
-		// BAR CHART
-		// Adding trace for the default Data
-		var trace1 = {
-			x: sampleValuesTopTen,
-			y: otuIdsTopTen.map(outId => `OTU ${outId}`),
-			text: otuLabelsTopTen,
-			type: "bar", 
-			marker: {
-				color: "rgb(0, 128, 256)", 
-			},
-			orientation: "h"
-		};
+	// BAR CHART
+	// Adding trace for the default Data
+	var trace1 = {
+		x: sampleValuesTopTen,
+		y: otuIdsTopTen.map(outId => `OTU ${outId}`),
+		text: otuLabelsTopTen,
+		type: "bar", 
+		marker: {
+			color: "rgb(0, 128, 256)", 
+		},
+		orientation: "h"
+	};
 
-		// data for the bar chart
-		var barData = [trace1];
+	// data for the bar chart
+	var barData = [trace1];
 
-		var barlayout = {
-			title: `<b> Top 10 OTUs for selected Sample <b>`,
-			xaxis: { title: "Sample Values"},
-			yaxis: { title: "Sample IDs"},
-			autosize: false,
-			width: 450,
-			height: 600
+	var barlayout = {
+		title: `<b> Top 10 OTUs for selected Sample <b>`,
+		xaxis: { title: "Sample Values"},
+		yaxis: { title: "Sample IDs"},
+		autosize: false,
+		width: 650,
+		height: 600
+	}
+
+	// Rendering the plot to the div tag with id "bar"
+	Plotly.newPlot("bar", barData, barlayout);
+
+	// BUBBLE CHART
+	var trace2 = {
+		x: sampleIdsDefault,
+		y: sampleValuesDefault,
+		text: sampleLabelsDefault,
+		mode: 'markers',
+		marker: {
+			color: sampleIdsDefault,
+			size: sampleValuesDefault
 		}
+	};
+	// Data for the bubble chart
+	var bubbleData = [trace2];
+	
+	var bubbleLayout = {
+		title: '<b>Bubble Chart displaying sample values for selected sample<b>',
+		xaxis: { title: "Sample ID"},
+		yaxis: { title: "Sample Value"}, 
+		showlegend: false,
+	};
+	
+	Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
-		// Rendering the plot to the div tag with id "bar"
-		Plotly.newPlot("bar", barData, barlayout);
+	// DEMOGRAPHICS for the default sample ID = 940
+	demoDefault = data.metadata.filter(sample => sample.id === 940)[0];
+	console.log(demoDefault);
 
-		// BUBBLE CHART
-		var trace2 = {
-			x: sampleIdsDefault,
-			y: sampleValuesDefault,
-			text: sampleLabelsDefault,
-			mode: 'markers',
-			marker: {
-				color: sampleIdsDefault,
-				size: sampleValuesDefault
-			}
-		};
-		// Data for the bubble chart
-		var bubbleData = [trace2];
-		
-		var bubbleLayout = {
-			title: '<b>Bubble Chart displaying sample values for selected sample<b>',
-			xaxis: { title: "Sample ID"},
-			yaxis: { title: "Sample Value"}, 
-			showlegend: false,
-		};
-		
-		Plotly.newPlot('bubble', bubbleData, bubbleLayout);
+	// Displaying key-value pair from the metadata JSON object
+	Object.entries(demoDefault).forEach(
+		([key, value]) => d3.select("#sample-metadata")
+				.append("p").text(`${key.toUpperCase()}: ${value}`));
 
-		// DEMOGRAPHICS for the default sample ID = 940
-		demoDefault = data.metadata.filter(sample => sample.id === 940)[0];
-		console.log(demoDefault);
+	// GAUGE CHART
+	// Geting the washing frequency value for the default sample ID
 
-		// Displaying key-value pair from the metadata JSON object
-		Object.entries(demoDefault).forEach(
-			([key, value]) => d3.select("#sample-metadata")
-					.append("p").text(`${key.toUpperCase()}: ${value}`));
+	var washFreqDefault = demoDefault.wfreq;
 
-		// GAUGE CHART
-		// Geting the washing frequency value for the default sample ID
-
-		var washFreqDefault = demoDefault.wfreq;
-
-		var gaugeData = [
-			{
-				domain: { x: [0, 1], y: [0, 1] },
-				value: washFreqDefault,
-				title: {text: '<b>Belly Button Washing Frequency</b> <br> Scrubs per week'},
-				type: "indicator",
-				mode: "gauge+number",
-				gauge: {
-					axis: { range: [0, 9] },
-					steps: [
-						{ range: [0, 1], color: 'rgb(161, 221, 156)' },
-						{ range: [1, 2], color: 'rgb(161, 211, 156)' },
-						{ range: [2, 3], color: 'rgb(161, 201, 156)' },
-						{ range: [3, 4], color: 'rgb(161, 191, 156)' },
-						{ range: [4, 5], color: 'rgb(161, 181, 156)' },
-						{ range: [5, 6], color: 'rgb(161, 171, 156)' },
-						{ range: [6, 7], color: 'rgb(161, 161, 156)' },
-						{ range: [7, 8], color: 'rgb(161, 151, 156))' },
-						{ range: [8, 9], color: 'rgb(161, 141, 156)' },
-					],
-					threshold: {
-						line: { color: "red", width: 4 },
-						thickness: 0.75,
-						value: 9}
-				}
-			}
-		];
-		
-		var gaugeLayout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
-		
-		Plotly.newPlot('gauge', gaugeData, gaugeLayout);
+	var gaugeData = [
+		{
+		domain: { x: [0, 1], y: [0, 1] },
+		value: washFreqDefault,
+		title: {text: '<b>Belly Button Washing Frequency</b> <br> Scrubs per week'},
+		type: "indicator",
+		mode: "gauge+number",
+		gauge: {
+			axis: { range: [0, 9] },
+			steps: [
+				{ range: [0, 1], color: 'rgb(161, 221, 156)' },
+				{ range: [1, 2], color: 'rgb(161, 211, 156)' },
+				{ range: [2, 3], color: 'rgb(161, 201, 156)' },
+				{ range: [3, 4], color: 'rgb(161, 191, 156)' },
+				{ range: [4, 5], color: 'rgb(161, 181, 156)' },
+				{ range: [5, 6], color: 'rgb(161, 171, 156)' },
+				{ range: [6, 7], color: 'rgb(161, 161, 156)' },
+				{ range: [7, 8], color: 'rgb(161, 151, 156))' },
+				{ range: [8, 9], color: 'rgb(161, 141, 156)' },
+			],
+			threshold: {
+				line: { color: "orange", width: 4 },
+				thickness: 0.75,
+				value: 9}
+		}
+		}
+	];
+	
+	var gaugeLayout = { width: 550, height: 500, margin: { t: 0, b: 0 } };
+	
+	Plotly.newPlot('gauge', gaugeData, gaugeLayout);
 	}
 
 init();
