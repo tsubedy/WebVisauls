@@ -4,10 +4,9 @@ d3.json("data/samples.json").then((sampleData) => {
 	// printing the dataset in the console 
   	console.log(sampleData);
 
-  	// Assigning a variable name to the dataset
-	var data = sampleData;
+  	var data = sampleData;
 
-	// Adding sample ID in the dropdown menu (dynamic)
+	// sample ID in the dropdown menu
 	var names = data.names;
 	names.forEach((name) => {
 		d3.select("#selDataset").append("option").text(name);
@@ -17,7 +16,7 @@ d3.json("data/samples.json").then((sampleData) => {
 // Initializing plots with default values
 
 function init() {
-	// Choosing a datapoint sample ID = 940 (the first data point) and plotting as default
+	// Choosing a datapoint sample ID = 940 (the first data point in the database) as default
 	defaultDataPoint = data.samples.filter(sample => sample.id === "940")[0];
 	console.log(defaultDataPoint);
 
@@ -26,7 +25,7 @@ function init() {
 	sampleIdsDefault = defaultDataPoint.otu_ids;
 	sampleLabelsDefault = defaultDataPoint.otu_labels;
 
-	// Select the top 10 OTUs for the sample ID with their values, ids and labels
+	// Selecting top 10 OTUs for the sample ID with their values, ids and labels
 	sampleValuesTopTen = sampleValuesDefault.slice(0, 10).reverse();
 	otuIdsTopTen = sampleIdsDefault.slice(0, 10).reverse();
 	otuLabelsTopTen = sampleLabelsDefault.slice(0, 10).reverse();
@@ -39,7 +38,7 @@ function init() {
 	// Adding trace for the default Data
 	var trace1 = {
 		x: sampleValuesTopTen,
-		y: otuIdsTopTen.map(outId => `OTU ${outId}`),
+		y: otuIdsTopTen.map(otuId => `OTU ${otuId}`),
 		text: otuLabelsTopTen,
 		type: "bar", 
 		marker: {
@@ -54,7 +53,7 @@ function init() {
 	var barlayout = {
 		title: `<b> Top 10 OTUs for selected Sample <b>`,
 		xaxis: { title: "Sample Values"},
-		yaxis: { title: "Sample IDs"},
+		yaxis: { title: "OTU IDs"},
 		autosize: false,
 		width: 650,
 		height: 600
@@ -78,9 +77,9 @@ function init() {
 	var bubbleData = [trace2];
 	
 	var bubbleLayout = {
-		title: '<b>Bubble Chart displaying sample values for selected sample<b>',
-		xaxis: { title: "Sample ID"},
-		yaxis: { title: "Sample Value"}, 
+		title: '<b>Bubble Chart: sample values by OTU Ids for selected sample<b>',
+		xaxis: { title: "OTU IDs"},
+		yaxis: { title: "Sample Values"}, 
 		showlegend: false,
 	};
 	
@@ -120,8 +119,9 @@ function init() {
 				{ range: [7, 8], color: 'rgb(161, 151, 156))' },
 				{ range: [8, 9], color: 'rgb(161, 141, 156)' },
 			],
+				
 			threshold: {
-				line: { color: "orange", width: 4 },
+				line: { color: "red", width: 4 },
 				thickness: 0.75,
 				value: 9}
 		}

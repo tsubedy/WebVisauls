@@ -14,7 +14,7 @@ Demographics column is created to display the sample metadata for selected sampl
 
 A Gauge Chart is created to plot weekly washing frequency of the individual sample.
 
-Updates are added for each the plots any time when a new sample is selected.
+Updates are added for each the plots when a new sample is selected.
 
 The dashboard app is deployed to GitHub Pages.
 
